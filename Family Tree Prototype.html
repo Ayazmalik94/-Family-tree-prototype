@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Johnson Legacy | Private Family Archive</title>
+    <!-- Premium Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- PREMIUM DESIGN SYSTEM --- */
+        :root {
+            --bg-deep: #0f172a;
+            --bg-surface: #1e293b;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --primary: #14b8a6;
+            --primary-glow: rgba(20, 184, 166, 0.4);
+            --primary-hover: #0d9488;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow-premium: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 20px var(--primary-glow);
+            --transition-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            touch-action: none;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(20, 184, 166, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+        }
+
+        /* --- LOGIN SCREEN --- */
+        #login-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.8s var(--transition-smooth);
+            padding: 20px;
+            background: var(--bg-deep);
+        }
+
+        .login-box {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 48px 40px;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-premium);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+
+        .login-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .login-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            font-weight: 400;
+        }
+        
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            font-size: 15px;
+            color: var(--text-main);
+            outline: none;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .login-box input::placeholder {
+            color: #475569;
+        }
+
+        .login-box input:focus {
+            border-color: var(--primary);
+            background: rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary);
+            color: #0f172a;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s var(--transition-smooth);
+            box-shadow: 0 4px 15px var(--primary-glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-box button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--primary-glow);
+        }
+
+        .login-box button:active {
+            transform: translateY(0);
+        }
+
+        .error-msg { 
+            color: #f87171; 
+            font-size: 13px; 
+            display: none; 
+            margin-bottom: 15px; 
+            font-weight: 500;
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* --- MAIN APP --- */
+        #app-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: none; 
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        #app-container.visible {
+            opacity: 1;
+        }
+
+        /* Header */
+        .header {
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            z-index: 10;
+            box-shadow: var(--shadow-premium);
+            pointer-events: none;
+            animation: slideDown 0.8s var(--transition-smooth) 0.5s both;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header h1 { 
+            margin: 0; 
+            font-family: 'Playfair Display', serif;
+            font-size: 20px; 
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        .header p { 
+            margin: 4px 0 0 0; 
+            font-size: 11px; 
+            color: var(--primary); 
+            text-transform: uppercase; 
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        /* Tree Canvas */
+        .tree-canvas {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            cursor: grab;
+            position: absolute;
+            top: 0; left: 0;
+        }
+        .tree-canvas:active { cursor: grabbing; }
+
+        /* Inner Wrapper */
+        #panzoom-wrapper {
+            position: absolute;
+            top: 0; left: 0;
+            width: 1000px;
+            height: 900px;
+            transform-origin: 0 0;
+            will-change: transform;
+        }
+
+        /* Tree Nodes (Cards) */
+        .node {
+            position: absolute;
+            width: 170px;
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 20px 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.4s var(--transition-smooth);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 5;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .node.loaded {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .node:hover { 
+            transform: translateY(-6px) scale(1.02); 
+            border-color: var(--primary);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 20px var(--primary-glow);
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .node-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            border: 3px solid var(--border-subtle);
+            background-color: #1e293b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            margin-bottom: 14px;
+            pointer-events: none;
+            transition: border-color 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .node:hover .node-avatar {
+            border-color: var(--primary);
+        }
+
+        .node-avatar img { width: 100%; height: 100%; object-fit: cover; pointer-events: none;}
+
+        .node-name {
+            color: var(--text-main);
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 4px;
+            line-height: 1.3;
+            letter-spacing: -0.2px;
+        }
+
+        .node-date {
+            color: var(--text-muted);
+            font-size: 10px;
+            text-align: center;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .node-flag { font-size: 14px; margin: 6px 0; }
+
+        .node-quote {
+            color: var(--text-muted);
+            font-size: 9px;
+            text-align: center;
+            font-style: italic;
+            margin-top: 10px;
+            line-height: 1.4;
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 10px;
+            width: 100%;
+        }
+
+        /* Connecting Lines (SVG) */
+        .connections {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        path {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.15);
+            stroke-width: 2px;
+            stroke-linecap: round;
+            stroke-dasharray: 400;
+            stroke-dashoffset: 400;
+            animation: drawLine 2s var(--transition-smooth) 0.8s forwards;
+        }
+
+        @keyframes drawLine {
+            to { stroke-dashoffset: 0; }
+        }
+
+        /* --- DETAILS PANEL (Premium Mobile Bottom Sheet) --- */
+        .details-panel {
+            position: absolute;
+            bottom: -100%; 
+            left: 0;
+            width: 100%;
+            height: 70%; 
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-top: 1px solid var(--glass-border);
+            box-shadow: 0 -20px 60px rgba(0,0,0,0.6);
+            transition: bottom 0.5s var(--transition-smooth);
+            z-index: 20;
+            padding: 30px 24px 40px;
+            overflow-y: auto;
+            border-radius: 28px 28px 0 0; 
+        }
+        
+        .details-panel.open { bottom: 0; }
+
+        /* Drag Handle for Mobile */
+        .drag-handle {
+            width: 40px;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            margin: 0 auto 20px;
+            cursor: grab;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px; right: 20px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 50%;
+            width: 36px; height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px; 
+            cursor: pointer; 
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+        .close-btn:hover { background: rgba(255,255,255,0.2); color: white; }
+
+        .panel-avatar {
+            width: 110px; height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 16px;
+            display: block;
+            border: 4px solid var(--primary);
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        .panel-name { 
+            text-align: center; 
+            margin: 0 0 6px 0; 
+            color: var(--text-main); 
+            font-family: 'Playfair Display', serif;
+            font-size: 24px; 
+        }
+        .panel-dates { 
+            text-align: center; 
+            color: var(--primary); 
+            font-size: 13px; 
+            margin-bottom: 28px; 
+            font-weight: 600; 
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        .panel-section { margin-bottom: 24px; }
+        .panel-section h4 { 
+            margin: 0 0 10px 0; 
+            color: var(--text-muted); 
+            border-bottom: 1px solid var(--border-subtle); 
+            padding-bottom: 8px; 
+            font-size: 11px; 
+            text-transform: uppercase; 
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+        .panel-section p { 
+            margin: 0; 
+            font-size: 15px; 
+            line-height: 1.6; 
+            color: #cbd5e1; 
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+        /* --- DESKTOP OVERRIDES --- */
+        @media (min-width: 768px) {
+            .header { top: 32px; left: 32px; padding: 20px 32px; }
+            .header h1 { font-size: 26px; }
+            .header p { font-size: 12px; }
+            
+            .node { width: 190px; padding: 24px 14px; }
+            .node-avatar { width: 86px; height: 86px; }
+            .node-name { font-size: 15px; }
+            .node-date { font-size: 11px; }
+            .node-quote { font-size: 10px; }
+
+            .details-panel {
+                top: 0; right: -450px; bottom: 0;
+                left: auto;
+                width: 420px;
+                height: 100%;
+                border-radius: 0;
+                border-left: 1px solid var(--glass-border);
+                border-top: none;
+                box-shadow: -20px 0 60px rgba(0,0,0,0.4);
+                transition: right 0.5s var(--transition-smooth);
+                padding: 40px 32px;
+            }
+            .details-panel.open { right: 0; bottom: 0; }
+            .drag-handle { display: none; }
+            .panel-avatar { width: 160px; height: 160px; }
+            .panel-name { font-size: 32px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen">
+        <div class="login-box">
+            <div class="login-logo">The Johnson Legacy</div>
+            <div class="login-subtitle">Private Family Archive</div>
+            <div class="error-msg" id="error-msg">Incorrect password. Please try again.</div>
+            <div class="input-group">
+                <input type="password" id="password-input" placeholder="Enter access code">
+            </div>
+            <button onclick="checkPassword()">Unlock Archive</button>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div id="app-container">
+        <div class="header">
+            <h1>The Johnson Family</h1>
+            <p>Interactive Genealogy</p>
+        </div>
+
+        <!-- Tree Canvas -->
+        <div class="tree-canvas" id="tree-canvas">
+            <div id="panzoom-wrapper">
+                <svg class="connections" id="lines-svg"></svg>
+                <!-- Nodes injected here -->
+            </div>
+        </div>
+
+        <!-- Details Panel -->
+        <div class="details-panel" id="details-panel">
+            <div class="drag-handle"></div>
+            <button class="close-btn" onclick="closePanel()">&times;</button>
+            <img src="" id="panel-img" class="panel-avatar" alt="Profile">
+            <h2 id="panel-name" class="panel-name">Name</h2>
+            <div id="panel-dates" class="panel-dates">Dates</div>
+            
+            <div class="panel-section">
+                <h4>Biography</h4>
+                <p id="panel-bio">Bio goes here...</p>
+            </div>
+            
+            <div class="panel-section">
+                <h4>Key Accomplishments</h4>
+                <p id="panel-accomplishments">Accomplishments go here...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* --- JAVASCRIPT LOGIC --- */
+
+        // 1. FAMILY DATA
+        const familyData = [
+            { 
+                id: 'mrs_johnson', name: 'Mrs Johnson', x: 50, y: 50,
+                img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop', dates: '09/01/1986',
+                bio: 'Mrs. Johnson is the matriarch of the family, known for her love of gardening and baking.',
+                acc: 'Raised two wonderful children. Active volunteer in the local community.'
+            },
+            { 
+                id: 'mr_johnson', name: 'Mr. Johnson', x: 280, y: 50, flag: '🇬🇧',
+                img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop', dates: '03/07/1965',
+                quote: 'Meet my dad! He\'d love it if you made a family tree and shared a picture with him.',
+                bio: 'Mr. Johnson is a retired engineer who loves history and travel.',
+                acc: 'Worked for 30 years in civil engineering. Traveled to over 40 countries.'
+            },
+            { 
+                id: 'marry', name: 'Marry Johnson', x: 50, y: 350,
+                img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop', dates: '09/20/1986',
+                bio: 'Marry is the eldest daughter. She works as a graphic designer.',
+                acc: 'Award-winning designer. Loves painting in her free time.'
+            },
+            { 
+                id: 'alex', name: 'Alex Johnson', x: 280, y: 350,
+                img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=crop', dates: '09/17/1988',
+                bio: 'Alex is the son. He is a software developer and a new father.',
+                acc: 'Created a popular open-source app. Welcomed his first child in 2005.'
+            },
+            { 
+                id: 'lina', name: 'Lina (Partner of Alex)', x: 510, y: 350,
+                img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop', dates: '09/20/1989',
+                bio: 'Lina is Alex\'s partner. She is a pediatric nurse.',
+                acc: 'Dedicated healthcare worker. Loves hiking on weekends.'
+            },
+            { 
+                id: 'sara', name: 'Sara Alex', x: 390, y: 650,
+                img: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=300&h=300&fit=crop', dates: '09/20/2005',
+                bio: 'Sara is the daughter of Alex and Lina. She is currently in college.',
+                acc: 'Dean\'s list student. Aspiring photographer.'
+            }
+        ];
+
+        // 2. RELATIONSHIPS
+        const relationships = [
+            ['mrs_johnson', 'marry'], ['mr_johnson', 'marry'],
+            ['mrs_johnson', 'alex'], ['mr_johnson', 'alex'],
+            ['alex', 'sara'], ['lina', 'sara']
+        ];
+
+        // 3. LOGIN LOGIC
+        function checkPassword() {
+            const input = document.getElementById('password-input').value;
+            const correctPassword = 'johnson2024'; 
+
+            if (input === correctPassword) {
+                document.getElementById('login-screen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('login-screen').style.display = 'none';
+                    const app = document.getElementById('app-container');
+                    app.style.display = 'block';
+                    setTimeout(() => app.classList.add('visible'), 50);
+                    initTree(); 
+                }, 800);
+            } else {
+                const err = document.getElementById('error-msg');
+                err.style.display = 'block';
+                setTimeout(() => err.style.display = 'none', 3000);
+            }
+        }
+
+        document.getElementById('password-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') checkPassword();
+        });
+
+        // 4. TREE RENDERING
+        function initTree() {
+            const wrapper = document.getElementById('panzoom-wrapper');
+            const svg = document.getElementById('lines-svg');
+            
+            wrapper.innerHTML = ''; 
+            wrapper.appendChild(svg);
+
+            // Create Nodes with Staggered Animation
+            familyData.forEach((person, index) => {
+                const node = document.createElement('div');
+                node.className = `node`;
+                node.style.left = person.x + 'px';
+                node.style.top = person.y + 'px';
+                
+                let extraContent = '';
+                if (person.flag) extraContent += `<div class="node-flag">${person.flag}</div>`;
+                if (person.quote) extraContent += `<div class="node-quote">"${person.quote}"</div>`;
+
+                node.innerHTML = `
+                    <div class="node-avatar">
+                        <img src="${person.img}" alt="${person.name}">
+                    </div>
+                    <div class="node-name">${person.name}</div>
+                    <div class="node-date">${person.dates}</div>
+                    ${extraContent}
+                `;
+
+                // Staggered load animation
+                setTimeout(() => {
+                    node.classList.add('loaded');
+                }, 300 + (index * 150));
+
+                node.addEventListener('click', (e) => {
+                    e.stopPropagation(); 
+                    openPanel(person);
+                });
+
+                wrapper.appendChild(node);
+            });
+
+            // Draw Lines
+            relationships.forEach(rel => {
+                const parent = familyData.find(p => p.id === rel[0]);
+                const child = familyData.find(p => p.id === rel[1]);
+
+                if (parent && child) {
+                    const pX = parent.x + 85; 
+                    const pY = parent.y + 60; 
+                    const cX = child.x + 85;
+                    const cY = child.y + 60;
+
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    
+                    let d = '';
+                    if (pX === cX) {
+                        d = `M ${pX} ${pY} L ${cX} ${cY}`;
+                    } else {
+                        const midY = pY + ((cY - pY) / 2);
+                        d = `M ${pX} ${pY} L ${pX} ${midY} L ${cX} ${midY} L ${cX} ${cY}`;
+                    }
+                    
+                    path.setAttribute('d', d);
+                    svg.appendChild(path);
+                }
+            });
+
+            // Initialize Pan/Zoom
+            initCustomPanZoom();
+        }
+
+        // 5. CUSTOM PAN & ZOOM LOGIC
+        function initCustomPanZoom() {
+            const element = document.getElementById('panzoom-wrapper');
+            const container = document.getElementById('tree-canvas');
+            
+            let isDragging = false;
+            let startX, startY;
+            let currentX = 0, currentY = 0;
+            let scale = 1;
+            let initialDistance = 0;
+            let initialScale = 1;
+
+            function centerTree() {
+                const containerRect = container.getBoundingClientRect();
+                
+                element.style.transform = 'translate(0px, 0px) scale(1)';
+                
+                const naturalWidth = element.offsetWidth;
+                const naturalHeight = element.offsetHeight;
+                
+                const scaleX = (containerRect.width - 60) / naturalWidth;
+                const scaleY = (containerRect.height - 60) / naturalHeight;
+                scale = Math.min(scaleX, scaleY, 1);
+                
+                currentX = (containerRect.width - naturalWidth * scale) / 2;
+                currentY = (containerRect.height - naturalHeight * scale) / 2;
+                
+                updateTransform();
+            }
+
+            function updateTransform() {
+                element.style.transform = `translate(${currentX}px, ${currentY}px) scale(${scale})`;
+            }
+
+            // Mouse Events
+            container.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.clientX - currentX;
+                startY = e.clientY - currentY;
+                container.style.cursor = 'grabbing';
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                currentX = e.clientX - startX;
+                currentY = e.clientY - startY;
+                updateTransform();
+            });
+
+            window.addEventListener('mouseup', () => {
+                isDragging = false;
+                container.style.cursor = 'grab';
+            });
+
+            // Mouse Wheel Zoom
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? -0.1 : 0.1;
+                const newScale = Math.min(Math.max(0.3, scale + delta), 3);
+                
+                const rect = container.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+                
+                currentX = mouseX - (mouseX - currentX) * (newScale / scale);
+                currentY = mouseY - (mouseY - currentY) * (newScale / scale);
+                scale = newScale;
+                
+                updateTransform();
+            }, { passive: false });
+
+            // Touch Events
+            container.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 1) {
+                    isDragging = true;
+                    startX = e.touches[0].clientX - currentX;
+                    startY = e.touches[0].clientY - currentY;
+                } else if (e.touches.length === 2) {
+                    isDragging = false;
+                    initialDistance = Math.hypot(
+                        e.touches[0].clientX - e.touches[1].clientX,
+                        e.touches[0].clientY - e.touches[1].clientY
+                    );
+                    initialScale = scale;
+                }
+            }, { passive: false });
+
+            container.addEventListener('touchmove', (e) => {
+                e.preventDefault(); 
+                
+                if (e.touches.length === 1 && isDragging) {
+                    currentX = e.touches[0].clientX - startX;
+                    currentY = e.touches[0].clientY - startY;
+                    updateTransform();
+                } else if (e.touches.length === 2) {
+                    const currentDistance = Math.hypot(
+                        e.touches[0].clientX - e.touches[1].clientX,
+                        e.touches[0].clientY - e.touches[1].clientY
+                    );
+                    
+                    if (initialDistance > 0) {
+                        const newScale = Math.min(Math.max(0.3, initialScale * (currentDistance / initialDistance)), 3);
+                        
+                        const rect = container.getBoundingClientRect();
+                        const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+                        const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+                        
+                        currentX = centerX - (centerX - currentX) * (newScale / scale);
+                        currentY = centerY - (centerY - currentY) * (newScale / scale);
+                        scale = newScale;
+                        
+                        updateTransform();
+                    }
+                }
+            }, { passive: false });
+
+            container.addEventListener('touchend', () => {
+                isDragging = false;
+                initialDistance = 0;
+            });
+
+            setTimeout(centerTree, 100);
+            
+            window.addEventListener('resize', () => {
+                centerTree();
+            });
+        }
+
+        // 6. PANEL LOGIC
+        function openPanel(person) {
+            const panel = document.getElementById('details-panel');
+            
+            document.getElementById('panel-img').src = person.img;
+            document.getElementById('panel-name').innerText = person.name;
+            document.getElementById('panel-dates').innerText = person.dates;
+            document.getElementById('panel-bio').innerText = person.bio || 'Biography details coming soon.';
+            document.getElementById('panel-accomplishments').innerText = person.acc || 'Accomplishments details coming soon.';
+
+            panel.classList.add('open');
+        }
+
+        function closePanel() {
+            document.getElementById('details-panel').classList.remove('open');
+        }
+
+    </script>
+</body>
+</html>
